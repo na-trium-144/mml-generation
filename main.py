@@ -15,10 +15,20 @@ def nextchord(prev):
     return random.choice(next)
 
 
-def writechord(c):
-    print(f"A {'_cdefga'[c]}1")
-    print(f"1A {'_efgabc'[c]}1")
-    print(f"2A {'_gabcde'[c]}1")
+def writechord(c, rp_base):
+    mml_out = ["", "", ""]
+    for b in rp_base:
+        if b:
+            mml_out[0] += '_cdefga'[c]
+            mml_out[1] += '_efgabc'[c]
+            mml_out[2] += '_gabcde'[c]
+        else:
+            mml_out[0] += "^"
+            mml_out[1] += "^"
+            mml_out[2] += "^"
+    print(f"A l8{mml_out[0]}")
+    print(f"1A l8{mml_out[1]}")
+    print(f"2A l8{mml_out[2]}")
 
 
 chords = []
@@ -28,8 +38,6 @@ while True:
         chords.append(nextchord(chords[-1]))
     if chords[4] == chords[0]:
         break
-for c in chords:
-    writechord(c)
 
 
 def randompick(pr):
@@ -86,6 +94,9 @@ note = random.choice(range(1, 8))
 prev_note = 4
 
 rp_base = random.choice(rhythmpattern_8beat)
+for c in chords:
+    writechord(c, rp_base)
+
 for i in range(4):
     rp_melody = []
     for j in range(8):
