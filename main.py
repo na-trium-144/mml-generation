@@ -4,6 +4,7 @@ import sys
 
 # print("A t150")
 
+
 def nextchord(prev):
     if prev == 1 or prev == 3 or prev == 6:
         next = [1, 3, 6, 2, 2, 4, 4, 5, 5]
@@ -13,10 +14,12 @@ def nextchord(prev):
         next = [1, 1, 3, 3, 6, 6, 5]
     return random.choice(next)
 
+
 def writechord(c):
     print(f"A {'_cdefga'[c]}1")
     print(f"1A {'_efgabc'[c]}1")
     print(f"2A {'_gabcde'[c]}1")
+
 
 chords = []
 while True:
@@ -28,7 +31,37 @@ while True:
 for c in chords:
     writechord(c)
 
-def nextnote(prev, chord):
+
+def randompick(pr):
+    l = []
+    for i in range(len(pr)):
+        l += [i] * int(pr[i])
+    return random.choice(l)
+
+
+def nextnote_first(prev, chord):
+    next_pr = [0] * 7
+    for i in range(3):
+        next_pr[(chord + i * 2) % 7] += 4 - abs(prev - (chord + i * 2)) % 7
+    n = randompick(next_pr)
+    if n == 0:
+        n = 7
+    return n
+
+
+def nextnote_other(prev, chord):
+    next_pr = [0] * 7
+    next_pr[prev % 7] = 2
+    for i in range(1, 4):
+        next_pr[(prev + i) % 7] = 4 - i
+        next_pr[(prev + 7 - i) % 7] = 4 - i
+    n = randompick(next_pr)
+    if n == 0:
+        n = 7
+    return n
+
+
+def nextnote_beat(prev, chord):
     next_pr = [0] * 7
     next_pr[prev % 7] = 2
     for i in range(1, 4):
@@ -36,14 +69,11 @@ def nextnote(prev, chord):
         next_pr[(prev + 7 - i) % 7] = 4 - i
     for i in range(3):
         next_pr[(chord + i * 2) % 7] += 1
-    next = []
-    for i in range(7):
-        next += [i] * int(next_pr[i])
-    # sys.stderr.write(f"{prev}, {next_pr}\n")
-    n = random.choice(next)
+    n = randompick(next_pr)
     if n == 0:
         n = 7
     return n
+
 
 rhythmpattern_8beat = [
     [1, 0, 1, 0, 1, 0, 1, 0],
@@ -70,11 +100,16 @@ for i in range(4):
 
     for j in range(8):
         if rp_melody[j]:
-            note = nextnote(note, chords[i])
+            if j == 0:
+                note = nextnote_first(note, chords[i])
+            elif rp_base[j]:
+                note = nextnote_beat(note, chords[i])
+            else:
+                note = nextnote_other(note, chords[i])
             if note - prev_note >= 4:
-                mml_out += "<" #オクターブ下げ
+                mml_out += "<"  # オクターブ下げ
             if note - prev_note <= -4:
-                mml_out += ">" #オクターブ上げ
+                mml_out += ">"  # オクターブ上げ
             mml_out += "_cdefgab"[note]
             prev_note = note
         else:
