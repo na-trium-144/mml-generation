@@ -15,17 +15,18 @@ def nextchord(prev):
     return random.choice(next)
 
 
+flip = random.choice([True, False])
 def writechord(c, rp_base):
     mml_out = ["", "", ""]
     for b in rp_base:
-        if b:
-            mml_out[0] += '_cdefga'[c]
-            mml_out[1] += '_efgabc'[c]
-            mml_out[2] += '_gabcde'[c]
+        if b ^ flip:
+            mml_out[0] += '_cdecdc'[c]
+            mml_out[1] += 'r'
+            mml_out[2] += 'r'
         else:
-            mml_out[0] += "^"
-            mml_out[1] += "^"
-            mml_out[2] += "^"
+            mml_out[0] += 'r'
+            mml_out[1] += '_efgfge'[c]
+            mml_out[2] += '_gababa'[c]
     print(f"A l8{mml_out[0]}")
     print(f"1A l8{mml_out[1]}")
     print(f"2A l8{mml_out[2]}")
