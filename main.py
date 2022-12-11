@@ -204,7 +204,7 @@ if note - prev_note >= 4:
 if note - prev_note <= -4:
     mml_out += ">"  # オクターブ上げ
 print(f"B l1{'_cdefgab'[note]}")
-note2 = nextnote_first(note2, octave, 1)
+note2 = subnote(note, 1)
 if note2 - prev_note2 >= 4:
     mml_out2 += "<"  # オクターブ下げ
 if note2 - prev_note2 <= -4:
