@@ -40,29 +40,41 @@ def randompick(pr):
     return random.choice(l)
 
 
-def nextnote_first(prev, chord):
+def nextnote_first(prev, octave, chord):
     next_pr = [0] * 7
     for i in range(3):
         next_pr[(chord + i * 2) % 7] += 4 - abs(prev - (chord + i * 2)) % 7
+    if octave > 0:
+        for i in range(1, 4):
+            next_pr[(prev + i) % 7] //= 2
+    if octave < 0:
+        for i in range(1, 4):
+            next_pr[(prev + 7 - i) % 7] //= 2
     n = randompick(next_pr)
     if n == 0:
         n = 7
     return n
 
 
-def nextnote_other(prev, chord):
+def nextnote_other(prev, octave, chord):
     next_pr = [0] * 7
     next_pr[prev % 7] = 2
     for i in range(1, 4):
         next_pr[(prev + i) % 7] = 4 - i
         next_pr[(prev + 7 - i) % 7] = 4 - i
+    if octave > 0:
+        for i in range(1, 4):
+            next_pr[(prev + i) % 7] //= 2
+    if octave < 0:
+        for i in range(1, 4):
+            next_pr[(prev + 7 - i) % 7] //= 2
     n = randompick(next_pr)
     if n == 0:
         n = 7
     return n
 
 
-def nextnote_beat(prev, chord):
+def nextnote_beat(prev, octave, chord):
     next_pr = [0] * 7
     next_pr[prev % 7] = 2
     for i in range(1, 4):
@@ -70,6 +82,12 @@ def nextnote_beat(prev, chord):
         next_pr[(prev + 7 - i) % 7] = 4 - i
     for i in range(3):
         next_pr[(chord + i * 2) % 7] += 1
+    if octave > 0:
+        for i in range(1, 4):
+            next_pr[(prev + i) % 7] //= 2
+    if octave < 0:
+        for i in range(1, 4):
+            next_pr[(prev + 7 - i) % 7] //= 2
     n = randompick(next_pr)
     if n == 0:
         n = 7
@@ -102,6 +120,7 @@ for p in range(2):
         note = random.choice(range(1, 8))
         prev_note = 4
         print("B o5l8")
+        octave = 0
 
         for c in chords:
             writechord(c, rp_base, flip)
@@ -121,15 +140,17 @@ for p in range(2):
             for j in range(8):
                 if rp_melody[j]:
                     if j == 0:
-                        note = nextnote_first(note, chords[i])
+                        note = nextnote_first(note, octave, chords[i])
                     elif rp_base[j]:
-                        note = nextnote_beat(note, chords[i])
+                        note = nextnote_beat(note, octave, chords[i])
                     else:
-                        note = nextnote_other(note, chords[i])
+                        note = nextnote_other(note, octave, chords[i])
                     if note - prev_note >= 4:
                         mml_out += "<"  # オクターブ下げ
+                        octave -= 1
                     if note - prev_note <= -4:
                         mml_out += ">"  # オクターブ上げ
+                        octave += 1
                     mml_out += "_cdefgab"[note]
                     prev_note = note
                 else:
@@ -156,9 +177,9 @@ print("A l1c")
 print("1A l1e")
 print("2A l1g")
 mml_out = "B "
-note = nextnote_first(note, 1)
+note = nextnote_first(note, octave, 1)
 if note - prev_note >= 4:
     mml_out += "<"  # オクターブ下げ
 if note - prev_note <= -4:
     mml_out += ">"  # オクターブ上げ
-print(f"B l1{note}")
+print(f"B l1{'_cdefgab'[note]}")
