@@ -28,9 +28,9 @@ def writechord(c, rp_base, flip):
             mml_out[0] += "r"
             mml_out[1] += "_efgfge"[c]
             mml_out[2] += "_gababa"[c]
-    print(f"A l8{mml_out[0]}")
-    print(f"1A l8{mml_out[1]}")
-    print(f"2A l8{mml_out[2]}")
+    print(f"A C1o3l8{mml_out[0]}")
+    print(f"1A C1o3l8{mml_out[1]}")
+    print(f"2A C1o3l8{mml_out[2]}")
 
 
 def randompick(pr):
@@ -94,6 +94,16 @@ def nextnote_beat(prev, octave, chord):
     return n
 
 
+def subnote(m, chord):
+    n = (m + 7 - 2) % 7
+    while n not in [chord % 7, (chord + 2) % 7, (chord + 4) % 7]:
+        n -= 1
+        n = (n + 7) % 7
+    if n == 0:
+        n = 7
+    return n
+
+
 start_chord = 1
 for p in range(2):
     chords = []
@@ -119,7 +129,9 @@ for p in range(2):
     for l in range(2):
         note = random.choice(range(1, 8))
         prev_note = 4
-        print("B o5l8")
+        prev_note2 = 4
+        print("B C2o5l8")
+        print("1B C2o5l8")
         octave = 0
 
         for c in chords:
@@ -136,6 +148,7 @@ for p in range(2):
                     p = 1 / 4
                 rp_melody.append(random.random() <= p)
             mml_out = "B "
+            mml_out2 = "1B "
 
             for j in range(8):
                 if rp_melody[j]:
@@ -152,10 +165,19 @@ for p in range(2):
                         mml_out += ">"  # オクターブ上げ
                         octave += 1
                     mml_out += "_cdefgab"[note]
+                    note2 = subnote(note, chords[i])
+                    if note2 - prev_note2 >= 4:
+                        mml_out2 += "<"  # オクターブ下げ
+                    if note2 - prev_note2 <= -4:
+                        mml_out2 += ">"  # オクターブ上げ
+                    mml_out2 += "_cdefgab"[note2]
                     prev_note = note
+                    prev_note2 = note2
                 else:
                     mml_out += "^"
+                    mml_out2 += "^"
             print(mml_out)
+            print(mml_out2)
 
     mml_out = "c"
     for j in range(7):
@@ -176,10 +198,15 @@ for p in range(2):
 print("A l1c")
 print("1A l1e")
 print("2A l1g")
-mml_out = "B "
 note = nextnote_first(note, octave, 1)
 if note - prev_note >= 4:
     mml_out += "<"  # オクターブ下げ
 if note - prev_note <= -4:
     mml_out += ">"  # オクターブ上げ
 print(f"B l1{'_cdefgab'[note]}")
+note2 = nextnote_first(note2, octave, 1)
+if note2 - prev_note2 >= 4:
+    mml_out2 += "<"  # オクターブ下げ
+if note2 - prev_note2 <= -4:
+    mml_out2 += ">"  # オクターブ上げ
+print(f"1B l1{'_cdefgab'[note2]}")
