@@ -127,3 +127,18 @@ for i in range(4):
         else:
             mml_out += "^"
     print(mml_out)
+
+mml_out = "c"
+for j in range(7):
+    mml_out += random.choice("ccr")
+print("C C10l8J36" + mml_out * 4)
+print("D C10l4J40 [rcrc]4")
+# mml_out = ""
+# for j in range(8):
+#     mml_out += random.choice("crr")
+# print("D C10l8J40" + mml_out * 4)
+mml_out = ""
+for j in range(4):
+    mml_out += "J44" + random.choice(["cc", "cr", "cr", "rr"])
+    mml_out += "J42" + random.choice(["cc", "cr", "cr", "rr"])
+print("E C10l16" + mml_out * 4)
