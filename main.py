@@ -210,7 +210,7 @@ if note - prev_note <= -4:
     mml_out += ">"  # オクターブ上げ
 mml_out += '_cdefgab'[note]
 print(mml_out)
-note2 = subnote(note, chords[i])
+note2 = subnote(note, 1)
 new_octave2 = octave
 if note2 > note:
     new_octave2 -= 1
